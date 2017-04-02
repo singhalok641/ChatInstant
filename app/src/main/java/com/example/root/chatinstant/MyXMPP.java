@@ -1,11 +1,10 @@
-package com.example.root.chatinstant.fragments;
+package com.example.root.chatinstant;
 
 import java.io.IOException;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.ChatManager;
@@ -16,7 +15,6 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 
 import android.content.Context;
@@ -26,34 +24,33 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.root.chatinstant.ChatMessage;
-import com.example.root.chatinstant.MyService;
-import com.example.root.chatinstant.R;
+import com.example.root.chatinstant.fragments.Chats;
 import com.google.gson.Gson;
 
 /**
  * Created by root on 3/30/17.
  */
 public class MyXMPP {
-    private static boolean connected = false;
-    private boolean loggedin = false;
-    private static boolean isconnecting = false;
-    private static boolean isToasted = true;
+    public static boolean connected = false;
+    public boolean loggedin = false;
+    public static boolean isconnecting = false;
+    public static boolean isToasted = true;
     private boolean chat_created = false;
     private String serverAddress;
     public static XMPPTCPConnection connection;
-    private static String loginUser;
-    private static String passwordUser;
-    private Gson gson;
-    private MyService context;
-    private static MyXMPP instance = null;
-    private static boolean instanceCreated = false;
+    public static String loginUser;
+    public static String passwordUser;
+    Gson gson;
+    MyService context;
+    public static MyXMPP instance = null;
+    public static boolean instanceCreated = false;
+    public org.jivesoftware.smack.chat.Chat Mychat;
 
-    public MyXMPP(MyService context, String serverAdress, String logiUser,
-                  String passwordser) {
+    private MyXMPP(MyService context, String serverAdress, String logiUser,
+                   String passwordser) {
         this.serverAddress = serverAdress;
-        loginUser = logiUser;
-        passwordUser = passwordser;
+        this.loginUser = logiUser;
+        this.passwordUser = passwordser;
         this.context = context;
         init();
 
@@ -63,14 +60,12 @@ public class MyXMPP {
                                      String user, String pass) {
 
         if (instance == null) {
-            instance = new MyXMPP(context, "http://talk.l.google.com/", "singhalok641@gmail.com", "8505960948");
+            instance = new MyXMPP(context, server, user, pass);
             instanceCreated = true;
         }
         return instance;
 
     }
-
-    public org.jivesoftware.smack.chat.Chat Mychat;
 
     ChatManagerListenerImpl mChatManagerListener;
     MMessageListener mMessageListener;
@@ -143,7 +138,7 @@ public class MyXMPP {
                     connection.connect();
                     DeliveryReceiptManager dm = DeliveryReceiptManager
                             .getInstanceFor(connection);
-                    dm.setAutoReceiptMode(AutoReceiptMode.always);
+                    dm.setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
                     dm.addReceiptReceivedListener(new ReceiptReceivedListener() {
 
                         @Override
@@ -258,12 +253,12 @@ public class MyXMPP {
 
                 login();
             }
-        } catch (NotConnectedException e) {
+        } catch (SmackException.NotConnectedException e) {
             Log.e("xmpp.SendMessage()", "msg Not sent!-Not Connected!");
 
         } catch (Exception e) {
-            Log.e("xmpp.SendMessage()Ex",
-                    "msgNotsent" + e.getMessage());
+            Log.e("xmpp.SendMessage()-Exception",
+                    "msg Not sent!" + e.getMessage());
         }
 
     }
@@ -431,14 +426,15 @@ public class MyXMPP {
 
         private void processMessage(final ChatMessage chatMessage) {
 
+            Log.e("Message",chatMessage.getBody().toString());
+
             chatMessage.isMine = false;
             Chats.chatlist.add(chatMessage);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
 
                 @Override
                 public void run() {
-                    Chats.chatAdapter.notifyDataSetChanged();
-
+                    Chats.mChatAdapter.notifyDataSetChanged();
                 }
             });
         }

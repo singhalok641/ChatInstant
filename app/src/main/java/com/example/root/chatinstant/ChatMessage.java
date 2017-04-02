@@ -27,6 +27,37 @@ public class ChatMessage {
     public void setMsgID() {
 
         msgid += "-" + String.format("%02d", new Random().nextInt(100));
-        ;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public String getDate() {
+        return Date;
+    }
+
+    public String getTime() {
+        return Time;
+    }
+
+    public String getMsgid() {
+        return msgid;
+    }
+
+    public boolean isMine() {
+        return isMine;
     }
 }

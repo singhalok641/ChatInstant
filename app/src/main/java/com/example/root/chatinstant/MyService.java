@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 
-import com.example.root.chatinstant.fragments.MyXMPP;
-
 import org.jivesoftware.smack.chat.Chat;
+
+import static com.example.root.chatinstant.MyXMPP.*;
 
 /**
  * Created by root on 3/30/17.
@@ -16,8 +16,8 @@ import org.jivesoftware.smack.chat.Chat;
 
 public class MyService extends Service {
     private static final String DOMAIN = "xmpp.jp";
-    private static final String USERNAME = "khushi";
-    private static final String PASSWORD = "password";
+    private static final String USERNAME = "singhalok641";
+    private static final String PASSWORD = "alok123*";
     public static ConnectivityManager cm;
     public static MyXMPP xmpp;
     public static boolean ServerchatCreated = false;
